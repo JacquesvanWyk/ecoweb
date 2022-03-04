@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+#TESTDIR="$HOSTNAME"
+#ssh jacquesvanwyk.com@ssh.stackcp.com "mkdir -p ~/$TESTDIR/test"
+
+ensure_dir() {
+  if [ ! -d "$__DIR__/$1" ]; then
+    mkdir "$__DIR__/$1"
+  fi
+}
+
+remote_details() {
+  ensure_dir .adam/remotes
+
+  ADDRESS="$(cat "$__DIR__/.adam/remotes/$1")"
+  RESULT=$?
+
+  if [ $RESULT -eq 0 ]; then
+    URL="$(sed -E 's/^(..*)\:.*$/\1/g' <<<"$ADDRESS")"
+    DIR="$(sed -E 's/^..*\:((.*)?)(\/\.git\/?)?$/\1/g' <<<"$ADDRESS")"
+
+    export URL DIR
+  fi
+
+  return $RESULT
+
+}
+
+
